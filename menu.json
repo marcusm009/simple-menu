@@ -1,21 +1,21 @@
 {
     "1": {
         "1": {
-            "caption": "Hello"
+            "label": "Hello"
         },
         "2": {
-            "caption": "Hello",
+            "label": "Hello",
             "function": "foo"
         },
-        "caption": "Create new Neural Network"
+        "label": "Create new Neural Network"
     },
     "2": {
         "1": {
-            "caption": "Hello"
+            "label": "Hello"
         },
         "2": {
-            "caption": "Hello"
+            "label": "Hello"
         },
-        "caption": "Load Neural Network"
+        "label": "Load Neural Network"
     }
 }
