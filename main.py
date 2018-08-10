@@ -1,7 +1,8 @@
 import json
 
 #TODO: Re-write description
-#TODO: Finish making menu class
+#TODO: Add menu switching and function handling
+#TODO: Perhaps switch import template to template in object.json
 
 class Menu:
     def __init__(self, blueprint, parent=None):
@@ -10,7 +11,8 @@ class Menu:
 
         # Initialize default attributes for menu
         self.label = ""
-        self.header = "\nChoose what you would like to do:"
+        self.header = "\n\tChoose what you would like to do:"
+        self.separator = 50 * "="
         self.selection_message = "\nSelection > "
         self.error_message = "Invalid selection! Please type number from list!"
 
@@ -49,8 +51,46 @@ class Menu:
     def as_dict(self):
         return to_dict(self)
 
+    def show(self):
+        # Declare user input
+        inp = 0
+
+        # Print header and separators
+        print(self.separator)
+        print(self.header)
+        print()
+        print(self.separator)
+
+        # Loop through options and print them
+        key = 1
+        while True:
+            cur_option = self.menu_options.get(str(key))
+            if cur_option is None:
+                break
+            print(str(key) + ". ", end='')
+            print(cur_option.label)
+            key += 1
+
+        # Get user input and validate it using the key from the menu option
+        #   dictionary
+        while True:
+            print(self.separator, end='')
+            inp = input(self.selection_message)
+            try:
+                if int(inp) < 1 or int(inp) > key - 1:
+                    raise Exception()
+                else:
+                    break
+            except:
+                print()
+                print(self.error_message)
+
+        return inp
+
+
 def to_dict(menu):
-    loop_attributes = ["label", "function", "header", "selection_message", "error_message"]
+    loop_attributes = ["label", "function", "header", "selection_message",
+        "error_message"]
     dict = {}
 
     # Loop through different attributes and add them to the dictionary
@@ -59,7 +99,7 @@ def to_dict(menu):
             dict[attribute] = getattr(menu, attribute)
 
     # Check to see if the menu contains any menu_options and recursively
-    # call to_dict to add them as a nested dictionary
+    #   call to_dict to add them as a nested dictionary
     if hasattr(menu, "menu_options"):
         key = 1
         menu_options = {}
@@ -81,6 +121,7 @@ def main():
         blueprint = json.load(read_file)
 
     menu = Menu(blueprint)
+    menu.show()
 
     with open("object.json", "w") as write_file:
         json.dump(menu.as_dict(), write_file, indent=4, sort_keys=True)
