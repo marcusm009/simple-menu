@@ -54,12 +54,21 @@ class Menu:
     def show(self):
         # Declare user input
         inp = 0
+        selection = None
+
+        # Check to make sure there are menu options
+        if not self.menu_options:
+            return
 
         # Print header and separators
         print(self.separator)
         print(self.header)
         print()
         print(self.separator)
+
+        # Check if the menu has a parent and print "go back" if it does
+        if self.parent is not None:
+            print("0. Go back")
 
         # Loop through options and print them
         key = 1
@@ -76,16 +85,18 @@ class Menu:
         while True:
             print(self.separator, end='')
             inp = input(self.selection_message)
-            try:
-                if int(inp) < 1 or int(inp) > key - 1:
-                    raise Exception()
-                else:
-                    break
-            except:
+            selection = self.menu_options.get(inp)
+            if selection is not None or inp == "0":
+                break
+            else:
                 print()
                 print(self.error_message)
 
-        return inp
+        if inp == "0" and self.parent is not None:
+            self.parent.show()
+
+        if type(selection) is Menu:
+            selection.show()
 
 
 def to_dict(menu):
