@@ -1,52 +1,7 @@
 {
-    "error_message": "Invalid selection! Please type number from list!",
+    "function": null,
     "header": "\n\tChoose what you would like to do:",
     "label": "",
-    "menu_options": {
-        "1": {
-            "error_message": "Invalid selection! Please type number from list!",
-            "header": "\n\tChoose what you would like to do:",
-            "label": "Create new Neural Network",
-            "menu_options": {
-                "1": {
-                    "error_message": "Invalid selection! Please type number from list!",
-                    "header": "\n\tChoose what you would like to do:",
-                    "label": "Hello",
-                    "menu_options": {},
-                    "selection_message": "\nSelection > "
-                },
-                "2": {
-                    "error_message": "Invalid selection! Please type number from list!",
-                    "header": "\n\tChoose what you would like to do:",
-                    "label": "Hello",
-                    "menu_options": {},
-                    "selection_message": "\nSelection > "
-                }
-            },
-            "selection_message": "\nSelection > "
-        },
-        "2": {
-            "error_message": "Invalid selection! Please type number from list!",
-            "header": "\n\tChoose what you would like to do:",
-            "label": "Load Neural Network",
-            "menu_options": {
-                "1": {
-                    "error_message": "Invalid selection! Please type number from list!",
-                    "header": "\n\tChoose what you would like to do:",
-                    "label": "Hello",
-                    "menu_options": {},
-                    "selection_message": "\nSelection > "
-                },
-                "2": {
-                    "error_message": "Invalid selection! Please type number from list!",
-                    "header": "\n\tChoose what you would like to do:",
-                    "label": "Hello",
-                    "menu_options": {},
-                    "selection_message": "\nSelection > "
-                }
-            },
-            "selection_message": "\nSelection > "
-        }
-    },
+    "menu_options": {},
     "selection_message": "\nSelection > "
 }
