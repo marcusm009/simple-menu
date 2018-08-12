@@ -1,21 +1,45 @@
 {
-    "1": {
-        "1": {
-            "label": "Hello"
-        },
-        "2": {
-            "label": "Hello",
-            "function": "foo"
-        },
-        "label": "Create new Neural Network"
-    },
-    "2": {
-        "1": {
-            "label": "Hello"
-        },
-        "2": {
-            "label": "Hello"
-        },
-        "label": "Load Neural Network"
-    }
+    "header": "Choose what you would like to do:",
+    "menu_options": [
+      {
+          "label": "Create a new neural network",
+          "header": "Choose what you would like to do:",
+          "menu_options": [
+            {
+                "label": "Poopidy scoop",
+                "header": "Choose what you would like to do:",
+                "menu_options": [
+                  {
+                      "label": "Poop",
+                      "header": "Choose what you would like to do:",
+                      "function": "func",
+                      "menu_options": [],
+                      "selection_message": "\nSelection > "
+                  },
+                  {
+                      "label": "Scoop",
+                      "header": "Choose what you would like to do:",
+                      "menu_options": [],
+                      "selection_message": "\nSelection > "
+                  }
+                ],
+                "selection_message": "\nSelection > "
+            },
+            {
+                "label": "Poopidy woop",
+                "header": "Choose what you would like to do:",
+                "menu_options": [],
+                "selection_message": "\nSelection > "
+            }
+          ],
+          "selection_message": "\nSelection > "
+      },
+      {
+          "label": "Load an existing neural network",
+          "header": "Choose what you would like to do:",
+          "menu_options": [],
+          "selection_message": "\nSelection > "
+      }
+    ],
+    "selection_message": "\nSelection > "
 }

@@ -1,104 +1,106 @@
 import json
+import curses
 
 #TODO: Re-write description
-#TODO: Add menu switching and function handling
 #TODO: Perhaps switch import template to template in object.json
 
 class Menu:
     def __init__(self, blueprint, parent=None):
         self.parent = parent
-        self.menu_options = {}
+        self.menu_options = []
 
         # Initialize default attributes for menu
         self.label = ""
-        self.header = "\n\tChoose what you would like to do:"
+        self.header = "\nChoose what you would like to do:"
         self.separator = 50 * "="
         self.selection_message = "\nSelection > "
-        self.error_message = "Invalid selection! Please type number from list!"
+        self.function = None
 
         # Initialize attributes
         label = blueprint.get("label")
         header = blueprint.get("head")
         selection_message = blueprint.get("selection_message")
-        error_message = blueprint.get("error_message")
+        function = blueprint.get("function")
 
         # Try to add new attributes to menu
         if label is not None:
             self.label = label
         if header is not None:
             self.header = header
+        if function is not None:
+            self.function = function
         if selection_message is not None:
             self.selection_message = selection_message
-        if error_message is not None:
-            self.error_message = error_message
 
-        # Initialize key to 1
-        key = 1
+        menu_options = blueprint.get("menu_options")
 
-        # Loop through blueprint with various keys to add menu options
-        while True:
-            # Assign menu_option to the specified key
-            menu_option = blueprint.get(str(key))
+        for menu_option in menu_options:
+            self.menu_options.append(Menu(menu_option, self))
 
-            # If the menu option exists
-            if menu_option:
-                # Append a new menu to the menu option
-                self.menu_options[str(key)] = Menu(menu_option, self)
-                key += 1
-            else:
-                break
 
     def as_dict(self):
         return to_dict(self)
 
-    def show(self):
-        # Declare user input
-        inp = 0
+    def __show__(self, stdscr):
+        # Initialize option and selection
+        option = 0
         selection = None
 
+        # Causes curses to use the default color scheme
+        curses.use_default_colors()
+
+        # Loop until an option is selected
+        while not selection:
+            # Clear the screen and add the header
+            stdscr.erase()
+
+            # Add the header
+            stdscr.addstr(self.header + '\n', curses.A_UNDERLINE)
+
+            # Loop through all menu options, check if the option is highlighted
+            #   and draw accordingly
+            for idx in range(len(self.menu_options)):
+                if idx == option:
+                    stdscr.addstr(self.menu_options[idx].label + '\n', curses.A_REVERSE)
+                else:
+                    stdscr.addstr(self.menu_options[idx].label + '\n')
+
+            # Gets the last character typed for input
+            c = stdscr.getch()
+            # Up and down changes which menu option to highlight, while right
+            #   and left selects and goes back accordingly
+            if c == curses.KEY_UP and option > 0:
+                option -= 1
+            elif c == curses.KEY_DOWN and option < len(self.menu_options) - 1:
+                option += 1
+            elif c == curses.KEY_RIGHT or c == 10:
+                selection = self.menu_options[option]
+            elif c == curses.KEY_LEFT:
+                selection = self.parent
+
+        # TODO: Fix function functionality
+        function = getattr(self, "function")
+        if function is not None:
+            function()
+
+        # Shows the next menu option
+        selection.show()
+
+        # Restores default color scheme
+        curses.use_default_colors()
+
+    def show(self):
         # Check to make sure there are menu options
         if not self.menu_options:
+            print("No menu options!")
             return
 
-        # Print header and separators
-        print(self.separator)
-        print(self.header)
-        print()
-        print(self.separator)
+        curses.wrapper(self.__show__)
 
-        # Check if the menu has a parent and print "go back" if it does
-        if self.parent is not None:
-            print("0. Go back")
+def func():
+    print("hello world!")
 
-        # Loop through options and print them
-        key = 1
-        while True:
-            cur_option = self.menu_options.get(str(key))
-            if cur_option is None:
-                break
-            print(str(key) + ". ", end='')
-            print(cur_option.label)
-            key += 1
-
-        # Get user input and validate it using the key from the menu option
-        #   dictionary
-        while True:
-            print(self.separator, end='')
-            inp = input(self.selection_message)
-            selection = self.menu_options.get(inp)
-            if selection is not None or inp == "0":
-                break
-            else:
-                print()
-                print(self.error_message)
-
-        if inp == "0" and self.parent is not None:
-            self.parent.show()
-
-        if type(selection) is Menu:
-            selection.show()
-
-
+# TODO: Fix to_dict not displaying nested menus
 def to_dict(menu):
     loop_attributes = ["label", "function", "header", "selection_message",
         "error_message"]
