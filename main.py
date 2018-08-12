@@ -2,7 +2,6 @@ import json
 import curses
 
 #TODO: Re-write description
-#TODO: Add menu switching and function handling
 #TODO: Perhaps switch import template to template in object.json
 
 class Menu:
@@ -12,7 +11,7 @@ class Menu:
 
         # Initialize default attributes for menu
         self.label = ""
-        self.header = "\n\tChoose what you would like to do:"
+        self.header = "\nChoose what you would like to do:"
         self.separator = 50 * "="
         self.selection_message = "\nSelection > "
         self.function = None
@@ -34,8 +33,10 @@ class Menu:
             self.selection_message = selection_message
 
         menu_options = blueprint.get("menu_options")
+
         for menu_option in menu_options:
             self.menu_options.append(Menu(menu_option, self))
+
 
     def as_dict(self):
         return to_dict(self)
@@ -45,47 +46,48 @@ class Menu:
         option = 0
         selection = None
 
-        # Initialize curses attributes
-        attributes = {}
-        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        attributes['normal'] = curses.color_pair(1)
-        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_WHITE)
-        attributes['highlighted'] = curses.color_pair(2)
+        # Causes curses to use the default color scheme
+        curses.use_default_colors()
 
         # Loop until an option is selected
         while not selection:
-
             # Clear the screen and add the header
             stdscr.erase()
+
+            # Add the header
             stdscr.addstr(self.header + '\n', curses.A_UNDERLINE)
 
+            # Loop through all menu options, check if the option is highlighted
+            #   and draw accordingly
             for idx in range(len(self.menu_options)):
                 if idx == option:
-                    attr = attributes['highlighted']
+                    stdscr.addstr(self.menu_options[idx].label + '\n', curses.A_REVERSE)
                 else:
-                    attr = attributes['normal']
-
-                # Check if the menu has a parent and add an option to go back
-                # if self.parent:
-                #     stdscr.addstr("Go back\n", attr)
-
-                stdscr.addstr(self.menu_options[idx].label + '\n', attr)
+                    stdscr.addstr(self.menu_options[idx].label + '\n')
 
             # Gets the last character typed for input
             c = stdscr.getch()
+            # Up and down changes which menu option to highlight, while right
+            #   and left selects and goes back accordingly
             if c == curses.KEY_UP and option > 0:
                 option -= 1
             elif c == curses.KEY_DOWN and option < len(self.menu_options) - 1:
                 option += 1
-            elif c == 10:
+            elif c == curses.KEY_RIGHT or c == 10:
                 selection = self.menu_options[option]
+            elif c == curses.KEY_LEFT:
+                selection = self.parent
 
+        # TODO: Fix function functionality
         function = getattr(self, "function")
         if function is not None:
             function()
 
+        # Shows the next menu option
         selection.show()
 
+        # Restores default color scheme
+        curses.use_default_colors()
 
     def show(self):
         # Check to make sure there are menu options
@@ -95,17 +97,10 @@ class Menu:
 
         curses.wrapper(self.__show__)
 
-        # # Check if the menu has a parent and print "go back" if it does
-        # if self.parent is not None:
-        #     print("0. Go back")
-        #
-        # if inp == "0" and self.parent is not None:
-        #     self.parent.show()
-
-
 def func():
     print("hello world!")
 
+# TODO: Fix to_dict not displaying nested menus
 def to_dict(menu):
     loop_attributes = ["label", "function", "header", "selection_message",
         "error_message"]
@@ -147,25 +142,3 @@ def main():
 
 
 main()
-
-# {
-#     "1": {
-#         "1": {
-#             "label": "Hello"
-#         },
-#         "2": {
-#             "label": "Hello",
-#             "function": "foo"
-#         },
-#         "label": "Create new Neural Network"
-#     },
-#     "2": {
-#         "1": {
-#             "label": "Hello"
-#         },
-#         "2": {
-#             "label": "Hello"
-#         },
-#         "label": "Load Neural Network"
-#     }
-# }

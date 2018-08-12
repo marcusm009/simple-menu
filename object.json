@@ -1,6 +1,6 @@
 {
     "function": null,
-    "header": "\n\tChoose what you would like to do:",
+    "header": "\nChoose what you would like to do:",
     "label": "",
     "menu_options": {},
     "selection_message": "\nSelection > "

@@ -8,8 +8,21 @@
             {
                 "label": "Poopidy scoop",
                 "header": "Choose what you would like to do:",
-                "function": "func",
-                "menu_options": [],
+                "menu_options": [
+                  {
+                      "label": "Poop",
+                      "header": "Choose what you would like to do:",
+                      "function": "func",
+                      "menu_options": [],
+                      "selection_message": "\nSelection > "
+                  },
+                  {
+                      "label": "Scoop",
+                      "header": "Choose what you would like to do:",
+                      "menu_options": [],
+                      "selection_message": "\nSelection > "
+                  }
+                ],
                 "selection_message": "\nSelection > "
             },
             {
