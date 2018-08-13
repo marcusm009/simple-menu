@@ -2,6 +2,5 @@
     "function": null,
     "header": "\nChoose what you would like to do:",
     "label": "",
-    "menu_options": {},
-    "selection_message": "\nSelection > "
+    "menu_options": {}
 }

@@ -11,15 +11,15 @@ class Menu:
 
         # Initialize default attributes for menu
         self.label = ""
-        self.header = "\nChoose what you would like to do:"
+        self.header = "\nChoose what you would like to do:\n"
         self.separator = 50 * "="
-        self.selection_message = "\nSelection > "
+        self.footer = "\nSelection: \"Enter\" or \"->\" | Go back: \"<-\""
         self.function = None
 
         # Initialize attributes
         label = blueprint.get("label")
         header = blueprint.get("head")
-        selection_message = blueprint.get("selection_message")
+        footer = blueprint.get("footer")
         function = blueprint.get("function")
 
         # Try to add new attributes to menu
@@ -29,22 +29,19 @@ class Menu:
             self.header = header
         if function is not None:
             self.function = function
-        if selection_message is not None:
-            self.selection_message = selection_message
+        if footer is not None:
+            self.footer = footer
 
         menu_options = blueprint.get("menu_options")
 
         for menu_option in menu_options:
             self.menu_options.append(Menu(menu_option, self))
 
-
-    def as_dict(self):
-        return to_dict(self)
-
     def __show__(self, stdscr):
         # Initialize option and selection
         option = 0
         selection = None
+        function = None
 
         # Causes curses to use the default color scheme
         curses.use_default_colors()
@@ -65,6 +62,10 @@ class Menu:
                 else:
                     stdscr.addstr(self.menu_options[idx].label + '\n')
 
+            # Add the footer
+            stdscr.addstr(self.footer)
+
+
             # Gets the last character typed for input
             c = stdscr.getch()
             # Up and down changes which menu option to highlight, while right
@@ -76,55 +77,39 @@ class Menu:
             elif c == curses.KEY_RIGHT or c == 10:
                 selection = self.menu_options[option]
             elif c == curses.KEY_LEFT:
-                selection = self.parent
-
-        # TODO: Fix function functionality
-        function = getattr(self, "function")
-        if function is not None:
-            function()
+                if self.parent:
+                    selection = self.parent
+                else:
+                    return
 
         # Shows the next menu option
-        selection.show()
+        function = selection.show()
 
         # Restores default color scheme
         curses.use_default_colors()
 
+        return function
+
     def show(self):
-        # Check to make sure there are menu options
+        # Check to make sure there are menu options. If not, it breaks out
+        #   recursion by returning the current function
         if not self.menu_options:
             print("No menu options!")
-            return
+            return self.function
 
-        curses.wrapper(self.__show__)
+        function = curses.wrapper(self.__show__)
+        return function
+
+def call_with_label(label):
+    possibles = globals().copy()
+    possibles.update(locals())
+    method = possibles.get(label)
+    if not method:
+         raise NotImplementedError("Method %s not implemented" % label)
+    method()
 
 def func():
-    print("hello world!")
-
-# TODO: Fix to_dict not displaying nested menus
-def to_dict(menu):
-    loop_attributes = ["label", "function", "header", "selection_message",
-        "error_message"]
-    dict = {}
-
-    # Loop through different attributes and add them to the dictionary
-    for attribute in loop_attributes:
-        if hasattr(menu, attribute):
-            dict[attribute] = getattr(menu, attribute)
-
-    # Check to see if the menu contains any menu_options and recursively
-    #   call to_dict to add them as a nested dictionary
-    if hasattr(menu, "menu_options"):
-        key = 1
-        menu_options = {}
-        while True:
-            try:
-                menu_options[str(key)] = to_dict(menu.menu_options[str(key)])
-                key += 1
-            except:
-                break
-        dict["menu_options"] = menu_options
-
-    return dict
+    print("hello")
 
 def main():
     # with open("menu.json", "w") as write_file:
@@ -134,11 +119,8 @@ def main():
         blueprint = json.load(read_file)
 
     menu = Menu(blueprint)
-    menu.show()
-
-    with open("object.json", "w") as write_file:
-        json.dump(menu.as_dict(), write_file, indent=4, sort_keys=True)
-
+    function = menu.show()
+    call_with_label(function)
 
 
 main()

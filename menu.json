@@ -13,33 +13,19 @@
                       "label": "Poop",
                       "header": "Choose what you would like to do:",
                       "function": "func",
-                      "menu_options": [],
-                      "selection_message": "\nSelection > "
-                  },
+                      "menu_options": []                  },
                   {
                       "label": "Scoop",
                       "header": "Choose what you would like to do:",
-                      "menu_options": [],
-                      "selection_message": "\nSelection > "
-                  }
-                ],
-                "selection_message": "\nSelection > "
-            },
+                      "menu_options": []                  }
+                ]            },
             {
                 "label": "Poopidy woop",
                 "header": "Choose what you would like to do:",
-                "menu_options": [],
-                "selection_message": "\nSelection > "
-            }
-          ],
-          "selection_message": "\nSelection > "
-      },
+                "menu_options": []            }
+          ]      },
       {
           "label": "Load an existing neural network",
           "header": "Choose what you would like to do:",
-          "menu_options": [],
-          "selection_message": "\nSelection > "
-      }
-    ],
-    "selection_message": "\nSelection > "
-}
+          "menu_options": []      }
+    ]}
